@@ -1,56 +1,41 @@
 export const dynamic = "force-dynamic"; // This disables SSG and ISR
 
 import prisma from "@/lib/prisma";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { checkPostTableExists } from "@/lib/db-utils";
+import { TambahBarangMasukCard } from "./dashboard/masuk/createMasuk";
+import { TambahBarangKeluarCard } from "./dashboard/keluar/createKeluar";
+import { TambahBarangCard } from "./dashboard/barang/createBarang";
+import { auth } from '@clerk/nextjs/server'
+
+
+
 
 export default async function Home() {
-  // Check if the post table exists
-  const tableExists = await checkPostTableExists();
 
-  // If the post table doesn't exist, redirect to setup page
-  if (!tableExists) {
-    redirect("/setup");
+  const { userId } = await auth()
+
+  if (!userId) {
+    return <div>Sign in to view this page</div>
   }
 
-  const posts = await prisma.post.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 6,
-    include: {
-      author: {
-        select: {
-          name: true,
-        },
-      },
-    },
+  const barang = await prisma.barang.findMany({
+    orderBy:{
+      kodeBarang: "asc",
+    }
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-24 px-8">
-      <h1 className="text-5xl font-extrabold mb-12 text-[#333333]">Recent Posts</h1>
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl mb-8">
-        {posts.map((post) => (
-          <Link key={post.id} href={`/posts/${post.id}`} className="group">
-            <div className="border rounded-lg shadow-md bg-white p-6 hover:shadow-lg transition-shadow duration-300">
-              <h2 className="text-2xl font-semibold text-gray-900 group-hover:underline mb-2">{post.title}</h2>
-              <p className="text-sm text-gray-500">by {post.author ? post.author.name : "Anonymous"}</p>
-              <p className="text-xs text-gray-400 mb-4">
-                {new Date(post.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-              <div className="relative">
-                <p className="text-gray-700 leading-relaxed line-clamp-2">{post.content || "No content available."}</p>
-                <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-gray-50 to-transparent" />
-              </div>
-            </div>
-          </Link>
-        ))}
+    <div className="grid grid-col-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3  md:flex-row p-4 md:p-8 gap-4 md:gap-8">
+      <div className="col-span-1">
+
+      <TambahBarangMasukCard barang={barang} />
+      </div>
+      <div className="col-span-1">
+
+      <TambahBarangKeluarCard barang={barang} />
+      </div>
+      <div className="col-span-1">
+      <TambahBarangCard barang={barang} />
+
       </div>
     </div>
   );
