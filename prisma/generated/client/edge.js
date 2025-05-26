@@ -175,7 +175,6 @@ const config = {
   ],
   "activeProvider": "postgresql",
   "postinstall": false,
-  "ciName": "Vercel",
   "inlineDatasources": {
     "db": {
       "url": {
@@ -186,7 +185,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id       String @id @default(cuid())\n  username String @unique\n  password String\n}\n\nmodel Barang {\n  id         String   @id @default(cuid())\n  kodeBarang String   @unique\n  namaBarang String\n  masuk      Masuk[]\n  keluar     Keluar[]\n}\n\nmodel Masuk {\n  id          String   @id @default(cuid())\n  barangId    String\n  barang      Barang   @relation(fields: [barangId], references: [id])\n  jumlahMasuk Int\n  tanggal     DateTime\n}\n\nmodel Keluar {\n  id           String   @id @default(cuid())\n  barangId     String\n  barang       Barang   @relation(fields: [barangId], references: [id])\n  jumlahKeluar Int\n  tanggal      DateTime\n}\n",
   "inlineSchemaHash": "1d33870c9e462a2f480feac0a6691efd8eb7865fefebf52b1bf77d46c41d9694",
-  "copyEngine": true
+  "copyEngine": false
 }
 config.dirname = '/'
 
