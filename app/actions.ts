@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { redirect } from 'next/navigation';
 import {revalidatePath} from "next/cache";
-import { Masuk, Keluar } from "@prisma/client"; 
+import { masuk, keluar } from "@prisma/client"; 
 
 
 export async function createBarang(formData: FormData) {
@@ -241,7 +241,7 @@ export async function getStockByBarangId(barangId: string): Promise<MonthlyStock
   } = {};
 
   // Add type annotation for 'item'
-  barangMasuk.forEach((item: Masuk) => {
+  barangMasuk.forEach((item: masuk) => {
     const date = new Date(item.tanggal);
     const year = date.getFullYear();
     const monthIndex = date.getMonth();
@@ -254,7 +254,7 @@ export async function getStockByBarangId(barangId: string): Promise<MonthlyStock
   });
 
   // Add type annotation for 'item'
-  barangKeluar.forEach((item: Keluar) => {
+  barangKeluar.forEach((item: keluar) => {
     const date = new Date(item.tanggal);
     const year = date.getFullYear();
     const monthIndex = date.getMonth();
