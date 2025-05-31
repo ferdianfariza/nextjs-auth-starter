@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { PackagePlus } from "lucide-react"
-
+import { Check, ChevronsUpDown } from "lucide-react"
 import { createBarang } from "@/app/actions"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,6 +16,21 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
+import { cn } from "@/lib/utils"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
 interface Props {
   barang: {
     id: string
@@ -25,6 +40,11 @@ interface Props {
 }
 
 export function TambahBarangCard({ barang }: Props) {
+  const [open, setOpen] = React.useState(false)
+    const [selectedBarang] = React.useState<{
+      id: string
+      label: string
+    } | null>(null)
   return (
     <Card className="w-full">
       <CardHeader>
@@ -39,6 +59,51 @@ export function TambahBarangCard({ barang }: Props) {
         {/* Form Tambah Barang */}
         <form action={createBarang}>
           <div className="grid gap-4">
+
+            {/* --- Kode Barang Combobox --- */}
+            <div>
+              <Label>List Barang</Label>
+              <input type="hidden"/>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between"
+                  >
+                    {selectedBarang?.label || "Lihat Barang"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="Cari barang..." />
+                    <CommandList>
+                      <CommandEmpty>Barang tidak ditemukan.</CommandEmpty>
+                      <CommandGroup>
+                        {barang.map((b) => (
+                          <CommandItem
+                            key={b.id}
+                            value={b.namaBarang}
+                            
+                          >
+                            {b.kodeBarang} - {b.namaBarang}
+                            <Check
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                selectedBarang?.id === b.id ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+
             <div>
               <Label htmlFor="kodeBarang">Kode Barang</Label>
               <Input
@@ -66,30 +131,6 @@ export function TambahBarangCard({ barang }: Props) {
             <Button type="submit">Tambahkan</Button>
           </CardFooter>
         </form>
-
-        {/* Tampilkan Daftar Barang */}
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Barang Tersedia:</h3>
-          {barang.length === 0 ? (
-            <p className="text-sm text-gray-500">Belum ada barang.</p>
-          ) : (
-            <ul className="space-y-2">
-              {barang.map((item) => (
-                <li
-                  key={item.id}
-                  className="bg-white p-3 border rounded-md shadow-sm flex justify-between items-center"
-                >
-                  <div>
-                    <div className="font-medium">{item.namaBarang}</div>
-                    <div className="text-sm text-gray-500">
-                      Kode: {item.kodeBarang}
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
       </CardContent>
     </Card>
   )
