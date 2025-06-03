@@ -64,7 +64,7 @@ export default function Navbar() {
       {/* Top nav content */}
       <div>
         <div className="text-3xl font-bold flex items-center gap-2 tracking-tight border-b border-gray-300 p-8 mb-5">
-          <Image src="/public/icon.png" width={40} height={40} alt="logo" />
+          <Image src="/public/icon.png" width={30} height={30} alt="logo" />
           K9sim
         </div>
 
